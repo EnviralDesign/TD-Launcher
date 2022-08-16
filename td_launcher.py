@@ -48,7 +48,7 @@ def query_td_registry_entries():
 def inspect_toe():
     # current_directory = os.getcwd() # doesn't work right with command like args, 
     td_file_path_osstyle = td_file_path.replace('/','\\')
-    command = f'"{current_directory}\\toeexpand\\toeexpand.exe" "{td_file_path_osstyle}"'
+    command = f'"{current_directory}\\toeexpand\\toeexpand.exe" "{td_file_path_osstyle}" .build'
 
     expand_dir = f'{td_file_path_osstyle}.dir'
     expand_toc = f'{td_file_path_osstyle}.toc'
@@ -132,14 +132,11 @@ dpg.set_primary_window("Primary Window", True)
 # record the starting time after the time intensive functions above have completed.
 seconds_started = time.time()
 
-# print(build_info)
-# print(td_key_id_dict.keys())
+
 if build_info not in list( td_key_id_dict.keys() ):
     countdown_enabled = False
-    # dpg.configure_item("detected_version", label = f'Detected TD Version: {build_info} (NOT INSTALLED)' )
-    # dpg.configure_item("detected_version", label = f'Detected TD Version: {build_info} (NOT INSTALLED)', color=[255,50,0,255] )
 
-# dpg.start_dearpygui() # can use this if we don't need to access / use main render loop.
+
 while dpg.is_dearpygui_running():
 
     if countdown_enabled == True:
