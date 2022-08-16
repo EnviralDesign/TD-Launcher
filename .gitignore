@@ -3,3 +3,6 @@ build
 dist
 inno/Output*
 td_launcher.spec
+test.py
+test2.toe
+test3.toe
