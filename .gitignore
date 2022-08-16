@@ -1,4 +1,5 @@
 py
 build
 dist
+inno/Output*
 td_launcher.spec

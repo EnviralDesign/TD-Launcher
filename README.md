@@ -8,6 +8,9 @@ This application is a simple bootstrapper for launching TouchDesigner projects (
 
 If you work on a lot of TD projects, or support many older projects you know the pain of having to manage / guess / remember which version something was built in. A real pain if you accidentally upgrade your projects build and lose work when trying to downgrade back again!
 
+## Not a virus
+This exe is not a virus, even if windows tells you it is. It's silly that I even have to say this but reading about on the internet shows that pyinstaller compiled executables get flagged as false positives all the time. Install via the setup.exe in the release and you should not have any issues.
+
 ## How this works
 This tool scans your registry for TouchDesigner entries, and builds a list of available TD executables / installs that can potentially be used. It then analyzes the .toe file and loads the GUI with the appropriate option selected, and starts a 5 second timer.
 
@@ -22,6 +25,8 @@ This was built with Python 3.10. Pyinstaller, and the wonderful [DearPyGui](http
 If you want to build, download this repo and unzip the py directory inside py.zip into the root of the repo. This is a fully python install, with Pyinstaller and DearPyGui installed.
 
 You can test the launcher by running td_launcher.bat, and you can rebuild the single executable by running BUILD.bat.
+
+Once the exe is generated at TD_Launcher\dist\td_launcher.exe, you can optionally package this into an installer exe using inno, in the inno directory.
 
 ---
 
