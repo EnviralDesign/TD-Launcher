@@ -124,7 +124,7 @@ with dpg.window(tag="Primary Window"):
     dpg.add_separator()
     dpg.add_button(label=f'Open with selected version in {5} seconds', tag="launch_button", width=800, height=79, callback=launch_toe_with_version)
 
-dpg.create_viewport(title='Multi Version TD Launcher', width=800, height=390, resizable=False)
+dpg.create_viewport(title='TD Launcher', width=800, height=390, resizable=False)
 dpg.setup_dearpygui()
 dpg.show_viewport()
 dpg.set_primary_window("Primary Window", True)
