@@ -16,6 +16,8 @@ This tool scans your registry for TouchDesigner entries, and builds a list of av
 
 If you interupt it by clicking anywhere, you can choose a different version or cancel. If you leave it undisturbed, it will launch after 5 sec in the detected version.
 
+If the required version of Touch is not found, the launcher will not launch anything automatically, and will wait for your input with the required build highlighted in red.
+
 ## How to use
 Simply download the .exe from the releases page on the right, and set windows to open your toe files with that by default. If you want to give it a trial run, just drag any .toe file onto the exe to test it manually.
 
