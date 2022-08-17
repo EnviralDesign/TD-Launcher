@@ -27,16 +27,23 @@ If you interupt it by clicking anywhere, you can choose a different version or c
 If the required version of Touch is not found, the launcher will not launch anything automatically, and will wait for your input with the required build highlighted in red.
 
 ## How to use
-Download the installer from the releases page on the right, and set windows to open your toe files with that by default. Doubleclicking on toes from that point onwards will launch them with the Launcher. You can also drag and drop toe files onto the launcher.
+Download the installer from the releases page on the right, and set windows to open your toe files with that by default. Doubleclicking on toes from that point onwards will launch them with the Launcher. 
+
+You can also drag and drop toe files onto the launcher.
 
 ## How to build
-This was built with Python 3.10. Pyinstaller, and the wonderful [DearPyGui](https://github.com/hoffstadt/DearPyGui) for UI. All other libraries used were defaults / builtins.
+This was built with Python 3.10. Pyinstaller, and the wonderful [DearPyGui](https://github.com/hoffstadt/DearPyGui) for UI amongst other things.
 
-If you want to build, download this repo and unzip the py directory inside py.zip into the root of the repo. This is a fully python install, with Pyinstaller and DearPyGui, and any other dependancies installed.
+By default, Pyinstaller compiled programs tend to get flagged as false positive viruses, for this one it showed up as Trojan:Win32/Wacatac.B!ml, which is of course nonsense. To get around this and release something that you can actually use without windows defender going bananas (see what I did there?) I bundled the executable into a windows installer setup exe.
 
-You can test the launcher by running td_launcher.bat, and you can rebuild the single executable by running BUILD.bat.
+If you want to build from from this repo, there's a few steps, b ut mostly automated.
 
-Once the exe is generated at TD_Launcher\dist\td_launcher.exe, you can optionally package this into an installer exe using inno, in the inno directory.
+1) download this repo
+2) unzip the py directory from inside py.zip into the root of the repo. This is a full python install, with Pyinstaller DearPyGui, etc installed.
+3) make your changes to td_launcher.py, the main script.
+4) test td_launcher.py easily by just double clicking td_launcher.bat.
+5) when ready to rebuild the single file exe with pyinstaller, run BUILD.bat. This will create the executable in dist\td_launcher.exe.
+6) optionally if you also wish to bundle the exe into an installer, you can open the iss file inno\TD_Launcher_Inno_Compiler.iss, with [inno setup](https://jrsoftware.org/isinfo.php), and build from there.  separate installer.exe will show up in the inno\Output\ directory.
 
 ---
 
