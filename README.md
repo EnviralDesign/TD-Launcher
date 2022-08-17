@@ -34,7 +34,9 @@ You can also drag and drop toe files onto the launcher.
 ## How to build
 This was built with Python 3.10. Pyinstaller, and the wonderful [DearPyGui](https://github.com/hoffstadt/DearPyGui) for UI amongst other things.
 
-By default, Pyinstaller compiled programs tend to get flagged as false positive viruses, for this one it showed up as Trojan:Win32/Wacatac.B!ml, which is of course nonsense. To get around this and release something that you can actually use without windows defender going bananas (see what I did there?) I bundled the executable into a windows installer setup exe.
+By default, Pyinstaller compiled programs when downloaded from the internet tend to get flagged as false positive viruses, for this one it showed up as Trojan:Win32/Wacatac.B!ml, which is of course nonsense. 
+
+To get around this for those downloading releases, I bundled the executable into a windows installer using inno setup.
 
 If you want to build from from this repo, there's a few steps, b ut mostly automated.
 
