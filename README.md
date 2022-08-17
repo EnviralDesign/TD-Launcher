@@ -20,7 +20,7 @@ A launcher / bootstrapper for launching TouchDesigner projects (.toe files) with
 If you work on a lot of TD projects, or support many older projects you know the pain of having to manage / guess / remember which version something was built in. A real pain if you accidentally upgrade your projects build and lose work when trying to downgrade back again!
 
 ## How this works
-This tool scans your registry for TouchDesigner entries, and builds a list of available TD executables / installs that can potentially be used. It then analyzes the .toe file and loads the GUI with the appropriate option selected, and starts a 5 second timer.
+This tool scans your computer when launched for TouchDesigner entries, and builds a list of available TD executable paths that can potentially be used. It then analyzes the .toe file and loads the GUI with the appropriate option selected, and starts a 5 second timer.
 
 If you interupt it by clicking anywhere, you can choose a different version or cancel. If you leave it undisturbed, it will launch after 5 sec in the detected version.
 
