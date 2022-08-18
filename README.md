@@ -1,5 +1,5 @@
 # TD_Launcher
-A launcher / bootstrapper for launching TouchDesigner projects (.toe files) with the correct version automatically.
+A standalone launcher application for automatically opening TouchDesigner projects (.toe files) with the correct version.
 
 ### Toe autolaunch
 ![image](https://user-images.githubusercontent.com/10091486/185008821-c4294500-7e1b-47d2-b3df-881519591de5.png)
