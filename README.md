@@ -4,7 +4,7 @@ A standalone launcher application for automatically opening TouchDesigner projec
 ### Toe autolaunch
 ![image](https://user-images.githubusercontent.com/10091486/185008821-c4294500-7e1b-47d2-b3df-881519591de5.png)
 
-### TD Download and Install from Launcher
+### Download TD and Install from Launcher
 ![image](https://user-images.githubusercontent.com/10091486/185009037-6569848a-dd25-4766-a73e-23a770b5e36b.png)
 ![image](https://user-images.githubusercontent.com/10091486/185009082-c09f20f5-01b6-4d8e-9a42-9e820844a9ec.png)
 ![image](https://user-images.githubusercontent.com/10091486/185009223-7d1f5840-02cb-4eae-b6b8-a26d4c8e032a.png)
