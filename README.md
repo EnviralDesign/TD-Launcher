@@ -34,18 +34,18 @@ You can also drag and drop toe files onto the launcher.
 ## How to build
 This was built with Python 3.10. Pyinstaller, and the wonderful [DearPyGui](https://github.com/hoffstadt/DearPyGui) for UI amongst other things.
 
-By default, Pyinstaller compiled programs when downloaded from the internet tend to get flagged as false positive viruses, for this one it showed up as Trojan:Win32/Wacatac.B!ml, which is of course nonsense. 
+By default, Pyinstaller compiled programs when downloaded directly from the internet as an exe or zipped exe tend to get flagged as false positive viruses, for this one it showed up as Trojan:Win32/Wacatac.B!ml, which is of course nonsense. 
 
-To get around this for those downloading releases, I bundled the executable into a windows installer using inno setup.
+To get around this for those downloading releases, I bundled the executable into a windows installer using inno setup which conveniently compresses the contents into a format chrome, windows etc can't read at download time.
 
-If you want to build from from this repo, there's a few steps, b ut mostly automated.
+If you want to build from this repo, there's a few steps, but they are mostly automated.
 
 1) download this repo
 2) unzip the py directory from inside py.zip into the root of the repo. This is a full python install, with Pyinstaller DearPyGui, etc installed.
 3) make your changes to td_launcher.py, the main script.
-4) test td_launcher.py easily by just double clicking td_launcher.bat.
+4) test td_launcher.py easily by just double clicking td_launcher.bat. (NOTE: when doubleclicking to run, it uses a bundled test.toe as a test file for simplicity.)
 5) when ready to rebuild the single file exe with pyinstaller, run BUILD.bat. This will create the executable in dist\td_launcher.exe.
-6) optionally if you also wish to bundle the exe into an installer, you can open the iss file inno\TD_Launcher_Inno_Compiler.iss, with [inno setup](https://jrsoftware.org/isinfo.php), and build from there.  separate installer.exe will show up in the inno\Output\ directory.
+6) optionally if you also wish to bundle the exe into an installer, you can open the iss file inno\TD_Launcher_Inno_Compiler.iss, with [inno setup](https://jrsoftware.org/isinfo.php), and build from there. separate installer.exe will show up in the inno\Output\ directory.
 
 ---
 
