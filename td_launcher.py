@@ -8,6 +8,8 @@ import sys
 import time
 import urllib.request
 
+app_version = '1.0.4'
+
 num_sec_until_autostart = 5
 current_directory = os.path.dirname(__file__)
 countdown_enabled = True
@@ -19,7 +21,7 @@ if len(sys.argv) >= 2:
 else:
     td_file_path = f'{current_directory}\\test.toe'
     # td_file_path = f'{current_directory}\\test2.toe'
-    td_file_path = f'{current_directory}\\test3.toe'
+    # td_file_path = f'{current_directory}\\test3.toe'
 
 def query_td_registry_entries():
     # scan the registry and store any keys we find along the way that contain the string "TouchDesigner"
@@ -48,9 +50,11 @@ def query_td_registry_entries():
     
     return td_key_id_dict
 
-
+'''
 def inspect_toe():
-    # current_directory = os.getcwd() # doesn't work right with command like args, 
+    # This function is no longer used, but keeping for reference. Since newer versions of toeexpand do not require dumping the .build directory
+    # to disk, we can simply get the build option from the subprocess output as seen in the _v2 function below.
+
     td_file_path_osstyle = td_file_path.replace('/','\\')
     command = f'"{current_directory}\\toeexpand\\toeexpand.exe" "{td_file_path_osstyle}" .build'
 
@@ -84,6 +88,29 @@ def inspect_toe():
     build_option = f'TouchDesigner.{info_split[1].split(" ")[-1]}'
     
     return build_option
+'''
+
+def inspect_toe_v2():
+    # this version of inspect_toe does not need to access extracted files on disk, 
+    # it simply gets the information dorectly from the subprocess.Popen() output.
+    # the subprocess call function is a bit different, it should follow this template: toeexpand -b C:\repos\TD_Launcher\test.toe
+
+    td_file_path_osstyle = td_file_path.replace('/','\\')
+    command = f'"{current_directory}\\toeexpand\\toeexpand.exe" -b "{td_file_path_osstyle}"'
+
+    process = subprocess.Popen(command, shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+    out, err = process.communicate() # this is a blocking call, it will wait until the subprocess is finished.
+    build_info = out.decode('utf-8') # convert the output to a string.
+
+    # strip \r from the build_info string.
+    build_info = build_info.replace('\r','')
+
+    info_split = build_info.split('\n') # split the string into a list.
+
+    build_option = f'TouchDesigner.{info_split[1].split(" ")[-1]}' # this is the build option we want to use.
+
+    return build_option
+
 
 def generate_td_url(build_option):
     # https://download.derivative.ca/TouchDesigner088.62960.64-Bit.exe
@@ -94,11 +121,13 @@ def generate_td_url(build_option):
     # https://download.derivative.ca/TouchDesigner.2021.16960.exe
     # https://download.derivative.ca/TouchDesigner.2022.26590.exe
 
+    
     split_options = build_option.split('.')
     product = split_options[0]
     year = split_options[1]
     build = split_options[2]
 
+    # generate the url based on the build option.
     if year in [ "2017" , "2018" ]:
         url = f'https://download.derivative.ca/TouchDesigner099.{year}.{build}.64-Bit.exe'
 
@@ -115,7 +144,8 @@ def generate_td_url(build_option):
 
 
 # gather and generate some variables.
-build_info = inspect_toe()
+# build_info = inspect_toe() # old version
+build_info = inspect_toe_v2()
 build_year = int(build_info.split('.')[1])
 td_url = generate_td_url(build_info)
 td_uri = f'{os.getcwd()}\\{td_url.split("/")[-1]}'
@@ -190,6 +220,7 @@ dpg.create_context()
 with dpg.handler_registry():
     dpg.add_mouse_click_handler(callback=cancel_countdown)
 
+
 with dpg.window(tag="Primary Window"):
 
     dpg.add_text(f'Detected TD File: {td_file_path}', color=[50,255,0,255])
@@ -227,7 +258,7 @@ with dpg.window(tag="Primary Window"):
     dpg.add_separator()
     dpg.add_button(label=f'Open with selected version in {5} seconds', tag="launch_button", width=-1, height=-1, callback=launch_toe_with_version)
 
-dpg.create_viewport(title='TD Launcher v1.0.3', width=800, height=442, resizable=True)
+dpg.create_viewport(title=f'TD Launcher {app_version}', width=800, height=442, resizable=True)
 dpg.setup_dearpygui()
 dpg.show_viewport()
 dpg.set_primary_window("Primary Window", True)

@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "TD Launcher"
-#define MyAppVersion "1.0.3"
+#define MyAppVersion "1.0.4"
 #define MyAppPublisher "Lucas Morgan ( Enviral Design )"
 #define MyAppURL "https://www.enviral-design.com/"
 #define MyAppExeName "td_launcher.exe"
