@@ -10,4 +10,5 @@
 --add-binary="toeexpand/icuuc59.dll;toeexpand" ^
 --add-binary="toeexpand/libcurl.dll;toeexpand" ^
 --add-binary="toeexpand/libcurl-x64.dll;toeexpand" ^
+--add-binary="toeexpand/zlib1.dll;toeexpand" ^
 .\td_launcher.py
