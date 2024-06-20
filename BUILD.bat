@@ -1,4 +1,9 @@
-.\py\Scripts\pyinstaller.exe --noconfirm --log-level=WARN ^
+@echo off
+setlocal
+
+set PYTHON_EXECUTABLE=.\py\python.exe
+
+%PYTHON_EXECUTABLE% .\py\Scripts\pyinstaller.exe --noconfirm --log-level=WARN ^
 --onefile --nowindow ^
 --windowed ^
 --name="td_launcher" ^
@@ -12,3 +17,5 @@
 --add-binary="toeexpand/libcurl-x64.dll;toeexpand" ^
 --add-binary="toeexpand/zlib1.dll;toeexpand" ^
 .\td_launcher.py
+
+endlocal
