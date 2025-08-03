@@ -1,5 +1,4 @@
 import dearpygui.dearpygui as dpg
-import winreg
 import subprocess
 import os
 from pathlib import Path
@@ -7,6 +6,13 @@ import shutil
 import sys
 import time
 import urllib.request
+import platform
+import plistlib
+import glob
+
+# Platform-specific imports
+if platform.system() == 'Windows':
+    import winreg
 
 app_version = '1.0.4'
 
@@ -19,9 +25,9 @@ download_progress = 0.0
 if len(sys.argv) >= 2:
     td_file_path = sys.argv[1] # this gets passed in as argument
 else:
-    td_file_path = f'{current_directory}\\test.toe'
-    # td_file_path = f'{current_directory}\\test2.toe'
-    # td_file_path = f'{current_directory}\\test3.toe'
+    td_file_path = os.path.join(current_directory, 'test.toe')
+    # td_file_path = os.path.join(current_directory, 'test2.toe')
+    # td_file_path = os.path.join(current_directory, 'test3.toe')
 
 def query_td_registry_entries():
     # scan the registry and store any keys we find along the way that contain the string "TouchDesigner"
@@ -47,6 +53,57 @@ def query_td_registry_entries():
     for k,v in td_key_id_dict.items():
         entry_val = winreg.QueryValue(reg, f'{k}\\shell\\open\\command')
         td_key_id_dict[k]['executable'] = entry_val.split('"')[1]
+    
+    return td_key_id_dict
+
+def query_td_mac_applications():
+    """Mac version: scan /Applications for TouchDesigner apps and extract version info from Info.plist"""
+    td_matching_apps = []
+    applications_dir = "/Applications"
+    
+    # Look for TouchDesigner applications
+    td_pattern = os.path.join(applications_dir, "TouchDesigner*")
+    td_apps = glob.glob(td_pattern)
+    
+    td_key_id_dict = {}
+    
+    for app_path in td_apps:
+        if not app_path.endswith('.app'):
+            continue
+            
+        app_name = os.path.basename(app_path)
+        info_plist_path = os.path.join(app_path, "Contents", "Info.plist")
+        
+        try:
+            # Read the Info.plist file
+            with open(info_plist_path, 'rb') as f:
+                plist_data = plistlib.load(f)
+            
+            # Extract version information
+            bundle_version = plist_data.get('CFBundleVersion', '')
+            bundle_name = plist_data.get('CFBundleName', app_name)
+            
+            if bundle_version:
+                # Create a key in the format TouchDesigner.VERSION.BUILD
+                # Parse the version to match Windows registry format
+                version_parts = bundle_version.split('.')
+                if len(version_parts) >= 2:
+                    year = version_parts[0]
+                    build = version_parts[1] if len(version_parts) > 1 else "0"
+                    td_key = f"TouchDesigner.{year}.{build}"
+                    
+                    # Path to the executable inside the app bundle
+                    executable_path = os.path.join(app_path, "Contents", "MacOS", "TouchDesigner")
+                    
+                    td_key_id_dict[td_key] = {
+                        'executable': executable_path,
+                        'app_path': app_path,
+                        'bundle_version': bundle_version
+                    }
+                    
+        except (FileNotFoundError, plistlib.InvalidFileException, KeyError) as e:
+            print(f"Could not read Info.plist for {app_path}: {e}")
+            continue
     
     return td_key_id_dict
 
@@ -92,11 +149,24 @@ def inspect_toe():
 
 def inspect_toe_v2():
     # this version of inspect_toe does not need to access extracted files on disk, 
-    # it simply gets the information dorectly from the subprocess.Popen() output.
-    # the subprocess call function is a bit different, it should follow this template: toeexpand -b C:\repos\TD_Launcher\test.toe
-
-    td_file_path_osstyle = td_file_path.replace('/','\\')
-    command = f'"{current_directory}\\toeexpand\\toeexpand.exe" -b "{td_file_path_osstyle}"'
+    # it simply gets the information directly from the subprocess.Popen() output.
+    
+    # Cross-platform path handling
+    if platform.system() == 'Windows':
+        toeexpand_path = os.path.join(current_directory, "toeexpand", "toeexpand.exe")
+    else:  # Mac/Linux
+        # For Mac, we'll use toeexpand from the first available TouchDesigner installation
+        td_apps = query_td_mac_applications()
+        if td_apps:
+            # Get the first available TouchDesigner app
+            first_app = list(td_apps.values())[0]
+            app_path = first_app['app_path']
+            toeexpand_path = os.path.join(app_path, "Contents", "MacOS", "toeexpand")
+        else:
+            raise FileNotFoundError("No TouchDesigner installation found for toeexpand")
+    
+    # Use cross-platform path
+    command = f'"{toeexpand_path}" -b "{td_file_path}"'
 
     process = subprocess.Popen(command, shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
     out, err = process.communicate() # this is a blocking call, it will wait until the subprocess is finished.
@@ -113,6 +183,7 @@ def inspect_toe_v2():
 
 
 def generate_td_url(build_option):
+    # Windows URLs:
     # https://download.derivative.ca/TouchDesigner088.62960.64-Bit.exe
     # https://download.derivative.ca/TouchDesigner099.2017.17040.64-Bit.exe
     # https://download.derivative.ca/TouchDesigner099.2018.28120.64-Bit.exe
@@ -120,25 +191,46 @@ def generate_td_url(build_option):
     # https://download.derivative.ca/TouchDesigner.2020.28110.exe
     # https://download.derivative.ca/TouchDesigner.2021.16960.exe
     # https://download.derivative.ca/TouchDesigner.2022.26590.exe
+    
+    # Mac URLs with architecture-specific suffixes:
+    # https://download.derivative.ca/TouchDesigner.2022.26590.intel.dmg
+    # https://download.derivative.ca/TouchDesigner.2022.26590.arm64.dmg
 
     
     split_options = build_option.split('.')
     product = split_options[0]
     year = split_options[1]
     build = split_options[2]
+    
+    # Platform and architecture-specific file extension
+    if platform.system() == 'Windows':
+        extension = '.exe'
+        arch_suffix = ''
+    else:  # Mac
+        extension = '.dmg'
+        # Detect Mac architecture
+        machine = platform.machine().lower()
+        if machine in ['arm64', 'aarch64']:
+            arch_suffix = '.arm64'
+        elif machine in ['x86_64', 'amd64']:
+            arch_suffix = '.intel'
+        else:
+            # Default to intel for unknown architectures
+            arch_suffix = '.intel'
+            print(f"Warning: Unknown Mac architecture '{machine}', defaulting to Intel")
 
-    # generate the url based on the build option.
-    if year in [ "2017" , "2018" ]:
-        url = f'https://download.derivative.ca/TouchDesigner099.{year}.{build}.64-Bit.exe'
+    # generate the url based on the build option and platform
+    if year in [ "2017" , "2018" ] and platform.system() == 'Windows':
+        url = f'https://download.derivative.ca/TouchDesigner099.{year}.{build}.64-Bit{extension}'
 
-    elif year in [ "2019" ]:
-        url = f'https://download.derivative.ca/TouchDesigner099.{year}.{build}.exe'
+    elif year in [ "2019" ] and platform.system() == 'Windows':
+        url = f'https://download.derivative.ca/TouchDesigner099.{year}.{build}{extension}'
 
     elif year == [ "2020" , "2021" , "2022"]:
-        url = f'https://download.derivative.ca/TouchDesigner.{year}.{build}.exe'
+        url = f'https://download.derivative.ca/TouchDesigner.{year}.{build}{arch_suffix}{extension}'
 
     else: # assume future years will use the same format as we have currently.
-        url = f'https://download.derivative.ca/TouchDesigner.{year}.{build}.exe'
+        url = f'https://download.derivative.ca/TouchDesigner.{year}.{build}{arch_suffix}{extension}'
 
     return url
 
@@ -148,8 +240,16 @@ def generate_td_url(build_option):
 build_info = inspect_toe_v2()
 build_year = int(build_info.split('.')[1])
 td_url = generate_td_url(build_info)
-td_uri = f'{os.getcwd()}\\{td_url.split("/")[-1]}'
-td_key_id_dict = query_td_registry_entries()
+
+# Cross-platform file path
+td_filename = td_url.split("/")[-1]
+td_uri = os.path.join(os.getcwd(), td_filename)
+
+# Platform-specific TouchDesigner discovery
+if platform.system() == 'Windows':
+    td_key_id_dict = query_td_registry_entries()
+else:  # Mac/Linux
+    td_key_id_dict = query_td_mac_applications()
 
 def cancel_countdown():
     global countdown_enabled
@@ -191,18 +291,34 @@ def start_download(sender, app_data):
 
 
 def install_touchdesigner_version(sender, app_data):
-    # print(sender,app_data)
-    # start "" /WAIT %td_installer_executable_abs% /SILENT /LOG="td_installation_Log.txt" /DIR="%td_path_abs%" /SUPPRESSMSGBOXES
-    install_command = [ 'start', '', '/WAIT', td_uri, ]
-    subprocess.Popen(install_command, shell = True)
+    # Platform-specific installation handling
+    if platform.system() == 'Windows':
+        # Windows: Run the .exe installer silently
+        install_command = [ 'start', '', '/WAIT', td_uri, ]
+        subprocess.Popen(install_command, shell = True)
+    else:  # Mac
+        # Mac: Open the .dmg file (this will mount it and show in Finder)
+        # The user will need to manually drag the app to Applications
+        install_command = ['open', td_uri]
+        subprocess.Popen(install_command)
+        
     exit_gui()
     return
 
 def launch_toe_with_version(sender, app_data):
     radio_value = dpg.get_value( "td_version" )
     executable_path = td_key_id_dict[radio_value]['executable']
-    open_command = f'"{executable_path}" "{td_file_path}"'
-    subprocess.Popen(open_command, shell = True)
+    
+    if platform.system() == 'Windows':
+        open_command = f'"{executable_path}" "{td_file_path}"'
+        subprocess.Popen(open_command, shell = True)
+    else:  # Mac
+        # On Mac, use 'open' command to launch the app with the file
+        # open -a "/Applications/TouchDesigner.app" "file.toe"
+        app_path = td_key_id_dict[radio_value]['app_path']
+        open_command = ['open', '-a', app_path, td_file_path]
+        subprocess.Popen(open_command)
+        
     exit_gui()
     return
 

@@ -1,0 +1,19 @@
+# TD Launcher Python Dependencies
+# Core GUI framework
+dearpygui>=1.9.0
+
+# Build tool
+pyinstaller>=5.0
+
+# Standard library modules (usually included with Python)
+# These are listed for documentation purposes:
+# - platform (built-in)
+# - plistlib (built-in) 
+# - glob (built-in)
+# - subprocess (built-in)
+# - os (built-in)
+# - pathlib (built-in)
+# - shutil (built-in)
+# - sys (built-in)
+# - time (built-in)
+# - urllib.request (built-in)
