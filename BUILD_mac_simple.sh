@@ -1,6 +1,6 @@
 #!/bin/bash
 # Simple Mac build script - creates app bundle without DMG
-# Good for development and testing
+# Optimized for Apple Silicon (arm64) - Good for development and testing
 
 set -e
 
@@ -22,14 +22,7 @@ echo "Cleaning previous builds..."
 rm -rf build/ dist/
 
 echo "Building app bundle..."
-pyinstaller --noconfirm --log-level=WARN \
-    --onefile \
-    --windowed \
-    --name="TD Launcher" \
-    --icon="td_launcher.ico" \
-    --add-data="test.toe:." \
-    --osx-bundle-identifier="com.enviral-design.td-launcher" \
-    td_launcher.py
+pyinstaller --noconfirm --log-level=WARN "TD Launcher.spec"
 
 echo ""
 echo "✅ Build completed!"

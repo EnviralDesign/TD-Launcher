@@ -5,6 +5,9 @@ dearpygui>=1.9.0
 # Build tool
 pyinstaller>=5.0
 
+# Image processing for icon conversion (required by PyInstaller on macOS)
+Pillow>=9.0.0
+
 # Standard library modules (usually included with Python)
 # These are listed for documentation purposes:
 # - platform (built-in)
