@@ -1,4 +1,4 @@
-.\py\Scripts\pyinstaller.exe --noconfirm --log-level=WARN ^
+.\py\python.exe -m PyInstaller --noconfirm --log-level=WARN ^
 --onefile --nowindow ^
 --windowed ^
 --name="td_launcher" ^
