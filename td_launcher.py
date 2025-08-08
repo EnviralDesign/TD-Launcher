@@ -448,6 +448,18 @@ if DEBUG_MODE:
     for key, info in td_key_id_dict.items():
         logger.debug(f"  • {key}: {info.get('executable', 'N/A')}")
 
+# Maintain a stable, ordered list of available versions for keyboard navigation (consistent across OS)
+def _parse_td_key_numeric(key: str):
+    try:
+        parts = key.split('.')
+        year = int(parts[1]) if len(parts) > 1 else -1
+        build = int(parts[2]) if len(parts) > 2 else -1
+        return (year, build)
+    except Exception:
+        return (-1, -1)
+
+version_keys = sorted(list(td_key_id_dict.keys()), key=_parse_td_key_numeric)
+
 # Check if we have the required version
 required_version_key = build_info
 if required_version_key in td_key_id_dict:
@@ -598,6 +610,45 @@ def exit_gui():
         logger.warning(f"GUI cleanup warning: {e}")
         sys.exit(1)
 
+# Keyboard navigation and actions
+def move_selection(step: int):
+    try:
+        if not version_keys:
+            return
+        current_value = dpg.get_value("td_version")
+        try:
+            current_index = version_keys.index(current_value)
+        except ValueError:
+            current_index = 0
+        new_index = (current_index + step) % len(version_keys)
+        dpg.set_value("td_version", version_keys[new_index])
+    except Exception as e:
+        logger.debug(f"move_selection error: {e}")
+
+
+def on_key_press(sender, app_data):
+    # app_data is the key code
+    try:
+        # Cancel countdown on any key interaction
+        cancel_countdown()
+
+        key_code = app_data
+        if key_code == getattr(dpg, 'mvKey_Up', None):
+            move_selection(-1)
+        elif key_code == getattr(dpg, 'mvKey_Down', None):
+            move_selection(1)
+        elif key_code in (
+            getattr(dpg, 'mvKey_Enter', None),
+            getattr(dpg, 'mvKey_Return', None),
+            getattr(dpg, 'mvKey_KeyPadEnter', None),
+            getattr(dpg, 'mvKey_KeypadEnter', None),
+        ):
+            launch_toe_with_version(sender, app_data)
+        elif key_code == getattr(dpg, 'mvKey_Escape', None):
+            exit_gui()
+    except Exception as e:
+        logger.debug(f"on_key_press error: {e}")
+
 # build the UI
 logger.info("🖥️  Initializing GUI...")
 logger.info(f"📄 TOE file to display: {td_file_path}")
@@ -608,6 +659,7 @@ dpg.create_context()
 
 with dpg.handler_registry():
     dpg.add_mouse_click_handler(callback=cancel_countdown)
+    dpg.add_key_press_handler(callback=on_key_press)
 
 
 with dpg.window(tag="Primary Window"):
@@ -642,7 +694,7 @@ with dpg.window(tag="Primary Window"):
     dpg.add_separator()
 
     with dpg.child_window(height=200, width=-1):
-        dpg.add_radio_button(list(td_key_id_dict.keys()), default_value=build_info, label='TD Version', tag="td_version", horizontal=False)
+        dpg.add_radio_button(version_keys, default_value=build_info, label='TD Version', tag="td_version", horizontal=False)
 
     dpg.add_separator()
     dpg.add_button(label=f'Open with selected version in {5} seconds', tag="launch_button", width=-1, height=-1, callback=launch_toe_with_version)
