@@ -11,14 +11,6 @@ import plistlib
 import glob
 import logging
 
-# macOS-specific imports for handling file associations
-if platform.system() == 'Darwin':
-    try:
-        import Cocoa
-        COCOA_AVAILABLE = True
-    except ImportError:
-        COCOA_AVAILABLE = False
-
 # Platform-specific imports
 if platform.system() == 'Windows':
     import winreg
