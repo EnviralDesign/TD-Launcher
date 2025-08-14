@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "TD Launcher"
-#define MyAppVersion "1.0.5"
+#define MyAppVersion "1.1.0"
 #define MyAppPublisher "Lucas Morgan ( Enviral Design )"
 #define MyAppURL "https://www.enviral-design.com/"
 #define MyAppExeName "td_launcher.exe"
@@ -24,12 +24,12 @@ AppUpdatesURL={#MyAppURL}
 DefaultDirName={autopf}\{#MyAppName}
 ChangesAssociations=yes
 DisableProgramGroupPage=yes
-LicenseFile=C:\tmp\MIT_LICENSE.txt
+LicenseFile=..\LICENSE
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
 OutputBaseFilename=mysetup
-SetupIconFile=C:\repos\TD_Launcher\td_launcher.ico
+SetupIconFile=..\td_launcher.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -41,7 +41,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\repos\TD_Launcher\dist\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Registry]
