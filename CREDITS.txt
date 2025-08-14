@@ -1,0 +1,16 @@
+TD Launcher — Credits
+
+Thank you to everyone who contributed to this project.
+
+Contributors:
+- Keith Lostracco (@keithlostracco)
+  - Improved detection of custom/daily TouchDesigner builds by checking if the last registry path segment is digits instead of assuming exactly two periods in names. Updated BUILD.bat to force PyInstaller to use the local python.exe.
+  - PR: https://github.com/EnviralDesign/TD-Launcher/pull/5
+
+- function-store (@function-store)
+  - Added macOS support and cross-platform enhancements, including optional logging, relative installer paths, platform-specific launching, and keyboard navigation (Enter to launch, arrows to navigate, Esc to quit).
+  - PR: https://github.com/EnviralDesign/TD-Launcher/pull/6
+
+Full list of contributors:
+- https://github.com/EnviralDesign/TD-Launcher/graphs/contributors
+
