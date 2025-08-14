@@ -126,7 +126,7 @@ def query_td_registry_entries():
             break
 
         # if touchdesigner exists in key and if there is no suffix like .Asset or .Component, we save the key.
-        if "TouchDesigner" in key_name and key_name.count('.') == 2:
+        if "TouchDesigner" in key_name and key_name.split('.')[-1].isdigit():
             td_matching_keys += [ key_name ]
     
     td_matching_keys = sorted(td_matching_keys)
