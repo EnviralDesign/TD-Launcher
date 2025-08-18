@@ -34,7 +34,7 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['td_launcher.ico'],
+    icon=['td_launcher.icns'],
 )
 coll = COLLECT(
     exe,
@@ -48,7 +48,7 @@ coll = COLLECT(
 app = BUNDLE(
     coll,
     name='TD Launcher.app',
-    icon='td_launcher.ico',
+    icon='td_launcher.icns',
     bundle_identifier='com.enviral-design.td-launcher',
     info_plist={
         'CFBundleDocumentTypes': [
@@ -56,7 +56,7 @@ app = BUNDLE(
                 'CFBundleTypeName': 'TouchDesigner Environment File',
                 'CFBundleTypeRole': 'Editor',
                 'LSHandlerRank': 'Alternate',
-                'CFBundleTypeIconFile': 'td_launcher.ico',
+                'CFBundleTypeIconFile': 'td_launcher.icns',
                 'LSItemContentTypes': ['ca.derivative.toe'],
                 'LSTypeIsPackage': False,
                 'CFBundleTypeExtensions': ['toe']

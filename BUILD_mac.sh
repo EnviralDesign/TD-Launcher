@@ -6,8 +6,17 @@ set -e  # Exit on any error
 
 echo "Building TD Launcher for Mac..."
 
+# Activate virtual environment if it exists
+if [ -d "td_launcher_env" ]; then
+    echo "Activating virtual environment..."
+    source td_launcher_env/bin/activate
+    echo "✅ Virtual environment activated"
+else
+    echo "⚠️  No virtual environment found. Using system Python."
+fi
+
 # Check if pyinstaller is available
-if ! command -v pyinstaller &> /dev/null; then
+if ! command -v pyinstaller &> /dev/null && ! python3 -c "import PyInstaller" 2>/dev/null; then
     echo "Error: pyinstaller not found. Install with: pip3 install pyinstaller"
     exit 1
 fi
